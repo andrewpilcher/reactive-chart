@@ -20,5 +20,5 @@ export const MockListFieldCollection: IListFieldCollection = {
             InternalName: "Amount",
             TypeAsString: "Number"        
         }
-    ]
-}
+    ],
+};

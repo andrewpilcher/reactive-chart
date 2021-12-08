@@ -18,4 +18,4 @@ export const MockListCollection: IListCollection = {
             ItemCount: 3
         }
     ]
-}
+};
