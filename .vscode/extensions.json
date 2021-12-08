@@ -1,5 +1,6 @@
 {
   "recommendations": [
-    "msjsdiag.debugger-for-chrome"
+    "msjsdiag.debugger-for-chrome",
+    "ms-vscode.vscode-typescript-tslint-plugin"
   ]
 }
