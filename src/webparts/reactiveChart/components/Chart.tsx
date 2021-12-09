@@ -3,6 +3,7 @@ import styles from './Chart.module.scss';
 import { escape } from '@microsoft/sp-lodash-subset';
 import SharePointService from '../../../services/SharePoint/SharePointService';
 import { IListItem } from '../../../services/SharePoint/IListItem';
+import { Bar } from 'react-chartjs-2';
 
 export interface IChartProps {
     chartTitle: string;
@@ -31,7 +32,28 @@ export default class Chart extends React.Component<IChartProps, IChartState> {
         return (
             <div className={styles.chartTitle}>
                 <h1>{escape(this.props.chartTitle)}</h1>
+
                 {this.state.error && <p>{this.state.error} </p>}
+
+                <Bar data={{
+                    labels: ['Jan', 'Feb', 'Mar'],
+                    datasets: [
+                        {
+                            label: 'Apples',
+                            data: [ 15, 9, 11],
+                        },
+                        {
+                            label: 'Oranges',
+                            data: [ 20, 19, 5],
+                        },
+                        {
+                            label: 'Bananas',
+                            data: [ 4, 2, 7],
+                        }
+                    ]
+                }}/>
+
+
                 <ul>
                     {this.state.items.map(item => {
                         return (
