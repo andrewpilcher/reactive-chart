@@ -22,7 +22,7 @@
     "description": { "default": "chart webpart for sharepoint" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "reactive-chart"
+      "description": "The description default in Property Pane"
     }
   }]
 }
