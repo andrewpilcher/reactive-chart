@@ -14,7 +14,7 @@
     "@microsoft/sp-office-ui-fabric-core": "1.13.1",
     "@microsoft/sp-property-pane": "1.13.1",
     "@microsoft/sp-webpart-base": "1.13.1",
-    "chart.js": "^3.6.2",
+    "chart.js": "^3.6.0",
     "office-ui-fabric-react": "7.174.1",
     "react": "16.13.1",
     "react-chartjs-2": "^4.0.0",

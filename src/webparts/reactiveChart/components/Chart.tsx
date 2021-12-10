@@ -3,7 +3,10 @@ import styles from './Chart.module.scss';
 import { escape } from '@microsoft/sp-lodash-subset';
 import SharePointService from '../../../services/SharePoint/SharePointService';
 import { IListItem } from '../../../services/SharePoint/IListItem';
-import { Bar } from 'react-chartjs-2';
+import { Chart as RChart} from 'react-chartjs-2';
+import { Chart as ChartJS, BarController, LineController, LineElement, BarElement, PointElement, LinearScale, Title, CategoryScale, Tooltip, Legend } from 'chart.js';
+
+ChartJS.register(BarController, LineController, LineElement, BarElement, PointElement, LinearScale, Title, CategoryScale, Tooltip, Legend);
 
 export interface IChartProps {
     chartTitle: string;
@@ -20,6 +23,7 @@ export default class Chart extends React.Component<IChartProps, IChartState> {
         super(props);
         // bind methods
         this.getItems = this.getItems.bind(this);
+        this.chartData = this.chartData.bind(this);
 
         // set initial state
         this.state = {
@@ -35,23 +39,7 @@ export default class Chart extends React.Component<IChartProps, IChartState> {
 
                 {this.state.error && <p>{this.state.error} </p>}
 
-                <Bar data={{
-                    labels: ['Jan', 'Feb', 'Mar'],
-                    datasets: [
-                        {
-                            label: 'Apples',
-                            data: [ 15, 9, 11],
-                        },
-                        {
-                            label: 'Oranges',
-                            data: [ 20, 19, 5],
-                        },
-                        {
-                            label: 'Bananas',
-                            data: [ 4, 2, 7],
-                        }
-                    ]
-                }}/>
+                <RChart type='bar' data={{labels: [ 'ET109', 'FCS120', 'KIN057', 'KIN114', 'NUR065', 'SPA005','SPA205'], datasets: this.chartData()}} />
 
 
                 <ul>
@@ -74,9 +62,39 @@ export default class Chart extends React.Component<IChartProps, IChartState> {
         SharePointService.getListItems('97140218-63A4-4732-BF07-720E33FA95B3').then(
             items => {
                 this.setState({ error: null, items: items.value, loading: false });
+                console.info(items);
             }
-        ).catch(error =>  {
-            this.setState({error: error, loading: false});
+        ).catch(error => {
+            this.setState({ error: error, loading: false });
         });
+    }
+
+    public chartData(): any {
+
+        const datasets = [];
+        const colors = [
+            '#eeac00',
+            '#000000',
+            '#727473',
+        ]
+
+        this.state.items.map((item, i) => {
+            const dataset = {
+                label: item.Title,
+                data: [
+                    item.OData__x0045_T109,
+                    item.OData__x0046_CS120,
+                    item.OData__x004b_IN057,
+                    item.OData__x004b_IN114,
+                    item.OData__x004e_UR065,
+                    item.OData__x0053_PA005,
+                    item.OData__x0053_PA205
+                ],
+                backgroundColor: colors[i%colors.length]
+            };
+            datasets.push(dataset);
+        });
+
+        return datasets;
     }
 }
