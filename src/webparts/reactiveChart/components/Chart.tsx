@@ -3,19 +3,55 @@ import styles from './Chart.module.scss';
 import { escape } from '@microsoft/sp-lodash-subset';
 import SharePointService from '../../../services/SharePoint/SharePointService';
 import { IListItem } from '../../../services/SharePoint/IListItem';
-import { Chart as RChart} from 'react-chartjs-2';
-import { Chart as ChartJS, BarController, LineController, LineElement, BarElement, PointElement, LinearScale, Title, CategoryScale, Tooltip, Legend } from 'chart.js';
+import { Chart as RChart } from 'react-chartjs-2';
+import { Chart as ChartJS, 
+    Title, 
+    BarController,
+    LineController, 
+    LineElement, 
+    BarElement, 
+    ArcElement,
+    PointElement, 
+    RadialLinearScale,
+    LinearScale, 
+    CategoryScale, 
+    Tooltip, 
+    Filler,
+    Legend, 
+    defaults } from 'chart.js';
 
-ChartJS.register(BarController, LineController, LineElement, BarElement, PointElement, LinearScale, Title, CategoryScale, Tooltip, Legend);
+ChartJS.register(
+    Title, 
+    BarController,
+    LineController, 
+    LineElement, 
+    BarElement, 
+    ArcElement,
+    PointElement, 
+    RadialLinearScale,
+    LinearScale, 
+    CategoryScale, 
+    Tooltip, 
+    Filler,
+    Legend
+    );
+
 
 export interface IChartProps {
+    description: string;
+    listId: string;
+    selectedFields: string[];
+    chartType: string;
     chartTitle: string;
+    chartColors: string[];
 }
 
 export interface IChartState {
     items: IListItem[];
     loading: boolean;
     error: string | null;
+    chartLabels: string[];
+    chartDatasets: any[];
 }
 
 export default class Chart extends React.Component<IChartProps, IChartState> {
@@ -23,13 +59,14 @@ export default class Chart extends React.Component<IChartProps, IChartState> {
         super(props);
         // bind methods
         this.getItems = this.getItems.bind(this);
-        this.chartData = this.chartData.bind(this);
 
         // set initial state
         this.state = {
             items: [],
             loading: false,
             error: null,
+            chartLabels: [],
+            chartDatasets: [],
         };
     }
     public render(): React.ReactElement<IChartProps> {
@@ -39,7 +76,14 @@ export default class Chart extends React.Component<IChartProps, IChartState> {
 
                 {this.state.error && <p>{this.state.error} </p>}
 
-                <RChart type='bar' data={{labels: [ 'ET109', 'FCS120', 'KIN057', 'KIN114', 'NUR065', 'SPA005','SPA205'], datasets: this.chartData()}} />
+                {this.props.chartType == 'bar' && <RChart type='bar' datasetIdKey='dsid' data={{ labels: this.state.chartLabels, datasets: this.state.chartDatasets}} />}
+                {this.props.chartType == 'line' && <RChart type='line' datasetIdKey='dsid' data={{ labels: this.state.chartLabels, datasets: this.state.chartDatasets}} />}
+                {this.props.chartType == 'doughnut' && <RChart type='doughnut' datasetIdKey='dsid' data={{ labels: this.state.chartLabels, datasets: this.state.chartDatasets}} />}
+                {this.props.chartType == 'bubble' && <RChart type='bubble' datasetIdKey='dsid' data={{ labels: this.state.chartLabels, datasets: this.state.chartDatasets}} />}
+                {this.props.chartType == 'pie' && <RChart type='pie' datasetIdKey='dsid' data={{ labels: this.state.chartLabels, datasets: this.state.chartDatasets}} />}
+                {this.props.chartType == 'scatter' && <RChart type='scatter' datasetIdKey='dsid' data={{ labels: this.state.chartLabels, datasets: this.state.chartDatasets}} />}
+                {this.props.chartType == 'radar' && <RChart type='radar' datasetIdKey='dsid' data={{ labels: this.state.chartLabels, datasets: this.state.chartDatasets}} />}
+                {this.props.chartType == 'polarArea' && <RChart type='polarArea' datasetIdKey='dsid' data={{ labels: this.state.chartLabels, datasets: this.state.chartDatasets}} />}
 
 
                 <ul>
@@ -59,42 +103,48 @@ export default class Chart extends React.Component<IChartProps, IChartState> {
 
     public getItems(): void {
         this.setState({ loading: true });
-        SharePointService.getListItems('97140218-63A4-4732-BF07-720E33FA95B3').then(
+        SharePointService.getListItems(this.props.listId).then(
             items => {
                 this.setState({ error: null, items: items.value, loading: false });
+                let data = {
+                    labels: [],
+                    datasets: []
+                };
+
+                items.value.map((item, i ) => {
+                    let dataset = {
+                        label: '',
+                        data: [],
+                        backgroundColor: this.props.chartColors[i % this.props.chartColors.length],
+                        borderColor: this.props.chartColors[i % this.props.chartColors.length],
+
+                    };
+                    this.props.selectedFields.map((field, j) => {
+                        // get value
+                        let value = item[field];
+                        if (i== 0 && j > 0) {
+                            data.labels.push(field);
+                        }
+
+                        if (j ==0) {
+                            dataset.label = value;
+                        } else {
+                            //prepend Odata_ to field name
+                            if (value === undefined && item[`OData_${field}`] !== undefined)
+                                value = item[`OData_${field}`];
+                            if (field.search(/[0-9]/g))
+                                value = item[`OData__x00${field.charCodeAt(0).toString(16)}_${field.substring(1)}`]
+                            dataset.data.push(value);
+                        }
+                    });
+                    data.datasets.push(dataset);
+                });
+                console.log(data);
+                this.setState({chartLabels: data.labels, chartDatasets: data.datasets});
                 console.info(items);
             }
         ).catch(error => {
             this.setState({ error: error, loading: false });
         });
-    }
-
-    public chartData(): any {
-
-        const datasets = [];
-        const colors = [
-            '#eeac00',
-            '#000000',
-            '#727473',
-        ]
-
-        this.state.items.map((item, i) => {
-            const dataset = {
-                label: item.Title,
-                data: [
-                    item.OData__x0045_T109,
-                    item.OData__x0046_CS120,
-                    item.OData__x004b_IN057,
-                    item.OData__x004b_IN114,
-                    item.OData__x004e_UR065,
-                    item.OData__x0053_PA005,
-                    item.OData__x0053_PA205
-                ],
-                backgroundColor: colors[i%colors.length]
-            };
-            datasets.push(dataset);
-        });
-
-        return datasets;
     }
 }

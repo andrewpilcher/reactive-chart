@@ -1,7 +1,13 @@
 declare interface IReactiveChartWebPartStrings {
   PropertyPaneDescription: string;
-  BasicGroupName: string;
+  DataGroupName: string;
+  StyleGroupName: string;
   DescriptionFieldLabel: string;
+  ListIdFieldLabel: string;
+  SelectedFieldsFieldLabel: string;
+  ChartTypeFieldLabel: string;
+  ChartTitleFieldLabel: string;
+  ChartColorsFieldLabel: string;
 }
 
 declare module 'ReactiveChartWebPartStrings' {
