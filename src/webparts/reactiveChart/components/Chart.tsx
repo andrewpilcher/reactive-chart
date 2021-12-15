@@ -50,6 +50,7 @@ export interface IChartProps {
     chartType: string;
     chartTitle: string;
     chartColors: string[];
+    colors: string[];
 }
 
 export interface IChartState {
@@ -126,8 +127,8 @@ export default class Chart extends React.Component<IChartProps, IChartState> {
                     let dataset = {
                         label: '',
                         data: [],
-                        backgroundColor: this.props.chartColors[i % this.props.chartColors.length],
-                        borderColor: this.props.chartColors[i % this.props.chartColors.length],
+                        backgroundColor: this.props.colors[i % this.props.colors.length],
+                        borderColor: this.props.colors[i % this.props.colors.length],
 
                     };
                     this.props.selectedFields.map((field, j) => {

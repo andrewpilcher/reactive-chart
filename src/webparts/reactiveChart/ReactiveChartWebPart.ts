@@ -7,6 +7,7 @@ import {
   PropertyPaneDropdown,
   PropertyPaneTextField
 } from '@microsoft/sp-property-pane';
+import { PropertyPaneColorPalette } from '../../controls/PropertyPaneColorPalatte/PropertyPaneColorPalette';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
 import { PropertyFieldMultiSelect } from '@pnp/spfx-property-controls/lib/PropertyFieldMultiSelect';
@@ -24,6 +25,7 @@ export interface IReactiveChartWebPartProps {
   selectedFields: string[];
   chartType: string;
   chartTitle: string;
+  colors: string[];
   chartColors: string;
   chartColors1: string;
   chartColors2: string;
@@ -47,6 +49,7 @@ export default class ReactiveChartWebPart extends BaseClientSideWebPart<IReactiv
         selectedFields: this.properties.selectedFields,
         chartType: this.properties.chartType,
         chartTitle: this.properties.chartTitle,
+        colors: this.properties.colors,
         chartColors: [
           this.properties.chartColors,
           this.properties.chartColors1,
@@ -130,45 +133,52 @@ export default class ReactiveChartWebPart extends BaseClientSideWebPart<IReactiv
                     { key: 'polar', text: 'Polar' }
                   ]
                 }),
-                PropertyFieldColorPicker('chartColors', {
+                new PropertyPaneColorPalette('colors', {
                   label: strings.ChartColorsFieldLabel,
-                  selectedColor: this.properties.chartColors,
-                  onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties,
-                  disabled: false,
-                  debounce: 1000,
-                  isHidden: false,
-                  alphaSliderHidden: false,
-                  style: PropertyFieldColorPickerStyle.Inline,
-                  iconName: 'Precipitation',
-                  key: 'colorFieldId0'
+                  colors: this.properties.colors,
+                  onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+                  key: 'colIDKkey'
                 }),
-                PropertyFieldColorPicker('chartColors1', {
-                  label: strings.ChartColorsFieldLabel,
-                  selectedColor: this.properties.chartColors1,
-                  onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties,
-                  disabled: false,
-                  debounce: 1000,
-                  isHidden: false,
-                  alphaSliderHidden: false,
-                  style: PropertyFieldColorPickerStyle.Inline,
-                  iconName: 'Precipitation',
-                  key: 'colorFieldId1'
-                }),
-                PropertyFieldColorPicker('chartColors2', {
-                  label: strings.ChartColorsFieldLabel,
-                  selectedColor: this.properties.chartColors2,
-                  onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties,
-                  disabled: false,
-                  debounce: 1000,
-                  isHidden: false,
-                  alphaSliderHidden: false,
-                  style: PropertyFieldColorPickerStyle.Inline,
-                  iconName: 'Precipitation',
-                  key: 'colorFieldId2'
-                })
+
+                // PropertyFieldColorPicker('chartColors', {
+                //   label: strings.ChartColorsFieldLabel,
+                //   selectedColor: this.properties.chartColors,
+                //   onPropertyChange: this.onPropertyPaneFieldChanged,
+                //   properties: this.properties,
+                //   disabled: false,
+                //   debounce: 1000,
+                //   isHidden: false,
+                //   alphaSliderHidden: false,
+                //   style: PropertyFieldColorPickerStyle.Inline,
+                //   iconName: 'Precipitation',
+                //   key: 'colorFieldId0'
+                // }),
+                // PropertyFieldColorPicker('chartColors1', {
+                //   label: strings.ChartColorsFieldLabel,
+                //   selectedColor: this.properties.chartColors1,
+                //   onPropertyChange: this.onPropertyPaneFieldChanged,
+                //   properties: this.properties,
+                //   disabled: false,
+                //   debounce: 1000,
+                //   isHidden: false,
+                //   alphaSliderHidden: false,
+                //   style: PropertyFieldColorPickerStyle.Inline,
+                //   iconName: 'Precipitation',
+                //   key: 'colorFieldId1'
+                // }),
+                // PropertyFieldColorPicker('chartColors2', {
+                //   label: strings.ChartColorsFieldLabel,
+                //   selectedColor: this.properties.chartColors2,
+                //   onPropertyChange: this.onPropertyPaneFieldChanged,
+                //   properties: this.properties,
+                //   disabled: false,
+                //   debounce: 1000,
+                //   isHidden: false,
+                //   alphaSliderHidden: false,
+                //   style: PropertyFieldColorPickerStyle.Inline,
+                //   iconName: 'Precipitation',
+                //   key: 'colorFieldId2'
+                // })
               ]
             }
           ]
@@ -236,6 +246,10 @@ export default class ReactiveChartWebPart extends BaseClientSideWebPart<IReactiv
           this.fieldOptions = fieldOptions;
           this.context.propertyPane.refresh();
         });
+      } else if (propertyPath === 'colors' && newValue) {
+        this.properties.colors = newValue;
+        this.context.propertyPane.refresh();
+        this.render();
       }
   }
 

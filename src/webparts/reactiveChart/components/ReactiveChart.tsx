@@ -19,7 +19,8 @@ export default class ReactiveChart extends React.Component<IReactiveChartProps, 
       selectedFields={this.props.selectedFields}
       chartType={this.props.chartType}
       chartTitle={this.props.chartTitle}
-      chartColors={this.props.chartColors} /> :
+      chartColors={this.props.chartColors}
+      colors={this.props.colors } /> :
       <MessageBar>{strings.NoListWarning}</MessageBar> }
       </div>
     );

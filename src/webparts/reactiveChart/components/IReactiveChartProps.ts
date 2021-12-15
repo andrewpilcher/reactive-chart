@@ -5,4 +5,5 @@ export interface IReactiveChartProps {
   chartType: string;
   chartTitle: string;
   chartColors: string[];
+  colors: string[];
 }
