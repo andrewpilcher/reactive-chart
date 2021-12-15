@@ -3,22 +3,25 @@ import * as ReactDom from 'react-dom';
 import { Environment, Version } from '@microsoft/sp-core-library';
 import {
   IPropertyPaneConfiguration,
+  IPropertyPaneDropdownOption,
   PropertyPaneDropdown,
   PropertyPaneTextField
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
+import { PropertyFieldMultiSelect } from '@pnp/spfx-property-controls/lib/PropertyFieldMultiSelect';
 
 import * as strings from 'ReactiveChartWebPartStrings';
 import ReactiveChart from './components/ReactiveChart';
 import { IReactiveChartProps } from './components/IReactiveChartProps';
 import SharePointService from '../../services/SharePoint/SharePointService';
+import { ThemeSettingName } from 'office-ui-fabric-react';
 
 
 export interface IReactiveChartWebPartProps {
   description: string;
   listId: string;
-  selectedFields: string;
+  selectedFields: string[];
   chartType: string;
   chartTitle: string;
   chartColors: string;
@@ -28,6 +31,12 @@ export interface IReactiveChartWebPartProps {
 }
 
 export default class ReactiveChartWebPart extends BaseClientSideWebPart<IReactiveChartWebPartProps> {
+  // list options state
+  private listOptions: IPropertyPaneDropdownOption[];
+  private listOptionsLoading: boolean = false;
+
+  private fieldOptions: IPropertyPaneDropdownOption[];
+  private fieldOptionsLoading: boolean = false;
 
   public render(): void {
     const element: React.ReactElement<IReactiveChartProps> = React.createElement(
@@ -35,7 +44,7 @@ export default class ReactiveChartWebPart extends BaseClientSideWebPart<IReactiv
       {
         description: this.properties.description,
         listId: this.properties.listId,
-        selectedFields: this.properties.selectedFields.split(','),
+        selectedFields: this.properties.selectedFields,
         chartType: this.properties.chartType,
         chartTitle: this.properties.chartTitle,
         chartColors: [
@@ -85,19 +94,24 @@ export default class ReactiveChartWebPart extends BaseClientSideWebPart<IReactiv
             {
               groupName: strings.DataGroupName,
               groupFields: [
+                PropertyPaneTextField('chartTitle', {
+                  label: strings.ChartTitleFieldLabel
+                }),
                 PropertyPaneTextField('description', {
                   label: strings.DescriptionFieldLabel
                 }),
-                PropertyPaneTextField('listId', {
-                  label: strings.ListIdFieldLabel
+                PropertyPaneDropdown('listId', {
+                  label: strings.ListIdFieldLabel,
+                  options: this.listOptions,
+                  disabled: this.listOptionsLoading,
                 }),
-                PropertyPaneTextField('selectedFields', {
-                  label: strings.SelectedFieldsFieldLabel
+                PropertyFieldMultiSelect('selectedFields', {
+                  key: 'multiSelect',
+                  label: strings.SelectedFieldsFieldLabel,
+                  options: this.fieldOptions,
+                  disabled: this.fieldOptionsLoading,
+                  selectedKeys: this.properties.selectedFields
                 }),
-
-                PropertyPaneTextField('chartTitle', {
-                  label: strings.ChartTitleFieldLabel
-                })
               ]
             }, {
               groupName: strings.StyleGroupName,
@@ -162,4 +176,67 @@ export default class ReactiveChartWebPart extends BaseClientSideWebPart<IReactiv
       ]
     };
   }
+
+  private getLists(): Promise<IPropertyPaneDropdownOption[]> {
+    this.listOptionsLoading = true;
+    this.context.propertyPane.refresh();
+
+    return SharePointService.getLists().then(lists => {
+      this.listOptionsLoading = false;
+      this.context.propertyPane.refresh();
+
+      return lists.value.map(list => {
+        return {
+          key: list.Id,
+          text: list.Title,
+        };
+      });
+    });
+  }
+
+  public getFields(): Promise<IPropertyPaneDropdownOption[]> {
+    //no list selected
+    if (!this.properties.listId) return Promise.reject();
+
+    this.fieldOptionsLoading = true;
+    this.context.propertyPane.refresh();
+
+    return SharePointService.getListFields(this.properties.listId).then(fields => {
+      this.fieldOptionsLoading = false;
+      this.context.propertyPane.refresh();
+
+      return fields.value.map(field => {
+        return {
+          key: field.Title,
+          text: `${field.Title} (${field.TypeAsString})`,
+        };
+      });
+    });
+  }
+
+  protected onPropertyPaneConfigurationStart(): void {
+    this.getLists().then(listOptions => {
+      this.listOptions = listOptions;
+      // force a refresh
+      this.context.propertyPane.refresh();
+    }).then(() => {
+      this.getFields().then(fieldOptions => {
+        this.fieldOptions = fieldOptions;
+        this.context.propertyPane.refresh();
+      });
+    });
+  }
+
+  protected onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): void {
+      super.onPropertyPaneFieldChanged(propertyPath, oldValue, newValue);
+
+      if (propertyPath === 'listId' && newValue) {
+        this.properties.selectedFields = [];
+        this.getFields().then(fieldOptions => {
+          this.fieldOptions = fieldOptions;
+          this.context.propertyPane.refresh();
+        });
+      }
+  }
+
 }

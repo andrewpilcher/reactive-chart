@@ -8,6 +8,11 @@ define([], function() {
     "SelectedFieldsFieldLabel":"Fields",
     "ChartTypeFieldLabel": "Type",
     "ChartTitleFieldLabel": "Title",
-    "ChartColorsFieldLabel": "Color"
+    "ChartColorsFieldLabel": "Color",
+    "LoadingSpinnerText": "It is coming, please, hold on ...",
+    "Loading": "Loading...",
+    "Refresh": "Refresh",
+    "FetchError": "🎭 There was a problem",
+    "NoListWarning": "Please review the property panel",
   }
 });

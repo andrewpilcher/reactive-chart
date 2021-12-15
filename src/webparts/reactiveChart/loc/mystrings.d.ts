@@ -8,6 +8,11 @@ declare interface IReactiveChartWebPartStrings {
   ChartTypeFieldLabel: string;
   ChartTitleFieldLabel: string;
   ChartColorsFieldLabel: string;
+  LoadingSpinnerText: string;
+  Loading: string;
+  Refresh: string;
+  FetchError: string;
+  NoListWarning: string;
 }
 
 declare module 'ReactiveChartWebPartStrings' {

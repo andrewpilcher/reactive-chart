@@ -7,5 +7,30 @@
 }
 
 .chartTitle {
-    @include ms-font-xl;
+    margin: 0 0 10px;
+    font-weight: 300;
+    text-align: center;
+    color: ms-fontColor-themePrimary; // '[theme:themePrimary, default:#eeac00]'; // ms-fontColor-themePrimary;
+    @include ms-font-su;
+}
+
+.chartBody {
+    
+    position: relative;
+}
+
+.chartSpinner {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 30px, 0;
+    z-index: 1;
+}
+
+.chartFooter {
+    text-align: center;
 }
