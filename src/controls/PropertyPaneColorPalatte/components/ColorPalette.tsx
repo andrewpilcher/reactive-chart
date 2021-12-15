@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as strings from 'ReactiveChartWebPartStrings';
+import { ColorSwatch } from './ColorSwatch';
 
 export interface IColorPaletteProps {
     colors: string[];
@@ -23,7 +24,11 @@ export class ColorPalette extends React.Component<IColorPaletteProps> {
             <div>
                 {this.props.colors.map((color, i) => {
                     return (
-                        <input key={i} type="text" value={color} onChange={event => this.onChanged(event.currentTarget.value, i)}/>
+                        <ColorSwatch key={i} 
+                        color={color} 
+                        onColorChanged={(newColor) => this.onChanged(newColor, i)}
+                        onColorDeleted={() => this.onChanged(null, i)}
+                        />
                     );
                 })}
             </div>
@@ -37,6 +42,10 @@ export class ColorPalette extends React.Component<IColorPaletteProps> {
     public onChanged(newColor: string, index: number): void {
         let updatedColors = this.props.colors;
         updatedColors[index] = newColor;
+
+        if (newColor === null) {
+            updatedColors.splice(index, 1);
+        }
 
         this.props.onChanged(updatedColors);
         
