@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { IPropertyPaneCustomFieldProps, IPropertyPaneField, PropertyPaneFieldType } from '@microsoft/sp-property-pane';
-import { ColorPalette, IColorPaletteProps} from './components/ColorPalette';
+import { ColorPalette, IColorPaletteProps } from './components/ColorPalette';
 
 export interface IPropertyPaneColorPaletteProps {
     label: string;
@@ -50,7 +50,7 @@ export class PropertyPaneColorPalette implements IPropertyPaneField<IPropertyPan
         ReactDom.render(element, elem);
     }
 
-    private onChanged(colors: string[]) {
+    private onChanged(colors: string[]): void {
         this.properties.onPropertyChange(this.targetProperty, this.properties.colors, colors);
     }
 
