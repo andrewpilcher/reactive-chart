@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { ColorPicker, IColor } from 'office-ui-fabric-react';
+import { Callout, ColorPicker, IColor, DirectionalHint } from 'office-ui-fabric-react';
 
 export interface IColorSwatchProps {
     color: string;
+    key: number;
     onColorChanged(color: string): void;
     onColorDeleted(): void;
 }
@@ -16,6 +17,7 @@ export class ColorSwatch extends React.Component<IColorSwatchProps, IColorSwatch
         super(props);
 
         // bindings
+        this.pick = this.pick.bind(this);
 
 
         // state
@@ -26,11 +28,18 @@ export class ColorSwatch extends React.Component<IColorSwatchProps, IColorSwatch
     public render(): React.ReactElement<IColorSwatchProps> { // JSX.Element { // 
         return (
             <div>
-                <ColorPicker color={this.props.color} onChange={(ev: any, colorObj: IColor) => this.props.onColorChanged('#'+colorObj.hex)}/>
-                <button onClick={this.props.onColorDeleted}>Delete</button>
+                <button onClick={this.pick} id={`pickBtn-${this.props.key}`}>Pick</button>
+                <Callout hidden={!this.state.picking} target={`#pickBtn-${this.props.key}`} onDismiss={this.pick} directionalHint={DirectionalHint.leftTopEdge}>
+                    <ColorPicker color={this.props.color} onChange={(ev: any, colorObj: IColor) => this.props.onColorChanged('#' + colorObj.hex)} />
+                    <button onClick={this.props.onColorDeleted}>Delete</button>
+                </Callout>
             </div>
         );
-        
+
+    }
+
+    public pick(): void {
+        this.setState({ picking: !this.state.picking });
     }
 }
 
