@@ -13,6 +13,8 @@ export class ColorPalette extends React.Component<IColorPaletteProps> {
         super(props);
 
         // bindings
+        this.onChanged = this.onChanged.bind(this);
+        this.addColor = this.addColor.bind(this);
     }
 
     /**
@@ -24,16 +26,17 @@ export class ColorPalette extends React.Component<IColorPaletteProps> {
             <div>
                 {this.props.colors.map((color, i) => {
                     return (
-                        <ColorSwatch key={i} 
-                        color={color} 
-                        onColorChanged={(newColor) => this.onChanged(newColor, i)}
-                        onColorDeleted={() => this.onChanged(null, i)}
-                        />
+                            <ColorSwatch key={i}
+                                color={color}
+                                onColorChanged={(newColor) => this.onChanged(newColor, i)}
+                                onColorDeleted={() => this.onChanged(null, i)}
+                            />
                     );
                 })}
+                <button onClick={this.addColor}>Add Color</button>
             </div>
         );
-        
+
     }
 
     /**
@@ -48,6 +51,12 @@ export class ColorPalette extends React.Component<IColorPaletteProps> {
         }
 
         this.props.onChanged(updatedColors);
-        
+
+    }
+
+    public addColor(): void {
+        let updatedColors = this.props.colors;
+        updatedColors.push('#eeac00');
+        this.props.onChanged(updatedColors);
     }
 }
