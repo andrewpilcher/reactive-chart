@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as strings from 'ReactiveChartWebPartStrings';
 import { ColorSwatch } from './ColorSwatch';
+import styles from './ColorPalette.module.scss';
+import { Icon } from '@fluentui/react/lib/Icon';
 
 export interface IColorPaletteProps {
     colors: string[];
@@ -23,7 +25,7 @@ export class ColorPalette extends React.Component<IColorPaletteProps> {
     */
     public render(): React.ReactElement<IColorPaletteProps> { // JSX.Element { // 
         return (
-            <div>
+            <div className={ styles.colorGrid }>
                 {this.props.colors.map((color, i) => {
                     return (
                             <ColorSwatch key={i}
@@ -33,7 +35,9 @@ export class ColorPalette extends React.Component<IColorPaletteProps> {
                             />
                     );
                 })}
-                <button onClick={this.addColor}>Add Color</button>
+                <button className={ styles.addColorBtn } onClick={this.addColor} >
+                <Icon iconName={ 'Add' } title="Add" ariaLabel={strings.AddColor} />
+                </button>
             </div>
         );
 

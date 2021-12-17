@@ -13,6 +13,8 @@ declare interface IReactiveChartWebPartStrings {
   Refresh: string;
   FetchError: string;
   NoListWarning: string;
+  AddColor: string;
+  DeleteColor: string;
 }
 
 declare module 'ReactiveChartWebPartStrings' {

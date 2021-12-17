@@ -24,12 +24,12 @@
         "default": "Other"
       },
       "title": {
-        "default": "reactive-chart"
+        "default": "CHHS Charts"
       },
       "description": {
         "default": "chart webpart for sharepoint"
       },
-      "officeFabricIconFontName": "Page",
+      "officeFabricIconFontName": "BarChart4",
       "properties": {
         "description": "The description default in Property Pane",
         "listId": "",

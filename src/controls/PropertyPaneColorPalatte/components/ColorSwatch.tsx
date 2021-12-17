@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Callout, ColorPicker, IColor, DirectionalHint } from 'office-ui-fabric-react';
+import * as strings from 'ReactiveChartWebPartStrings';
+import { Callout, ColorPicker, IColor, DirectionalHint, DefaultButton, IButtonProps } from 'office-ui-fabric-react';
+import styles from './ColorSwatch.module.scss';
 
 export interface IColorSwatchProps {
     color: string;
@@ -28,10 +30,12 @@ export class ColorSwatch extends React.Component<IColorSwatchProps, IColorSwatch
     public render(): React.ReactElement<IColorSwatchProps> { // JSX.Element { // 
         return (
             <div>
-                <button onClick={this.pick} id={`pickBtn-${this.props.key}`}>Pick</button>
+                <button className={styles.pickBtn} style={{ backgroundColor: this.props.color }} onClick={this.pick} id={`pickBtn-${this.props.key}`}>{this.props.color}</button>
                 <Callout hidden={!this.state.picking} target={`#pickBtn-${this.props.key}`} onDismiss={this.pick} directionalHint={DirectionalHint.leftTopEdge}>
                     <ColorPicker color={this.props.color} onChange={(ev: any, colorObj: IColor) => this.props.onColorChanged('#' + colorObj.hex)} />
-                    <button onClick={this.props.onColorDeleted}>Delete</button>
+                    <footer className={ styles.swatchActions }> 
+                        <DefaultButton text={ strings.DeleteColor } iconProps={{ iconName: 'trash' }} onClick={this.props.onColorDeleted}></DefaultButton>
+                    </footer>
                 </Callout>
             </div>
         );

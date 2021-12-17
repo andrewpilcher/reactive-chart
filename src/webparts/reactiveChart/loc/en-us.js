@@ -14,5 +14,7 @@ define([], function() {
     "Refresh": "Refresh",
     "FetchError": "🎭 There was a problem",
     "NoListWarning": "Please review the property panel",
+    "AddColor": "Add Color to list",
+    "DeleteColor": "Delete",
   }
 });
